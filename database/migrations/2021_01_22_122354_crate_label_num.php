@@ -14,7 +14,7 @@ class CrateLabelNum extends Migration
     public function up()
     {
         //
-        Schema::create('Label_nums', function (Blueprint $table) {
+        Schema::create('label_nums', function (Blueprint $table) {
             $table->id();
             $table->string('type')->unique();
             $table->integer('labelNum');
@@ -31,6 +31,6 @@ class CrateLabelNum extends Migration
     public function down()
     {
         //
-        Schema::dropIfExists('Label_nums');
+        Schema::dropIfExists('label_nums');
     }
 }
