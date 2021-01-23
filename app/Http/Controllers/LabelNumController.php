@@ -16,9 +16,13 @@ class LabelNumController extends Controller
         $TYPE_DONE="done";
         $COUNT_NUM = 10;
 
-        if ($request->inputOnGoing != NULL){
+        if ($request->input != NULL){
             $num = LabelNum::where('type', $TYPE_ON_GOING)->get();
             $num[0]->labelNum = $request->labelNumeOnGoing;
+            $num[0]->save();
+
+            $num = LabelNum::where('type', $TYPE_DONE)->get();
+            $num[0]->labelNum = $request->labelNumeDone;
             $num[0]->save();
 
             // var_dump($request->labelNumeOnGoing);
@@ -42,11 +46,6 @@ class LabelNumController extends Controller
             $numDone[0]->labelNum = $numDone[0]->labelNum + $request->labelNumeOnGoing;
             $numDone[0]->save();
         
-        }else if($request->inputDone != NULL){
-            $num = LabelNum::where('type', $TYPE_DONE)->get();
-            $num[0]->labelNum = $request->labelNumeDone;
-            $num[0]->save();
-
         }
 
         // $nums = LabelNum::all();
@@ -59,8 +58,12 @@ class LabelNumController extends Controller
     public function show(){
         $nums = LabelNum::all();
         return view('labelNum', ['nums' => $nums]);
-
     }
 
+
+    public function test(){
+        $nums = LabelNum::all();
+        return view('test', ['nums' => $nums]);
+    }
 
 }

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', 'LabelNumController@show');
-
+Route::get('/test', 'LabelNumController@test');
 
 
 Route::post('/LabelNum/input', 'LabelNumController@input');

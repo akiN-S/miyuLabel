@@ -65,7 +65,7 @@
 
                                 <div class="form-group row">
                                     <div class="col-md-4"></div>
-                                    <button type="submit" class="btn btn-primary col-md-6" name="input" value="input">手動入力内容確定</button>
+                                    <button type="submit" class="btn btn-primary col-md-6" name="done" value="done">手動入力内容確定</button>
                                 </div>
                                 
                                 <div class="form-group row">
