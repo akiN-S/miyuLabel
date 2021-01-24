@@ -22,4 +22,5 @@ Route::get('/test', 'LabelNumController@test');
 
 
 Route::post('/LabelNum/input', 'LabelNumController@input');
+Route::post('/LabelNum/testPost', 'LabelNumController@testPost');
 
