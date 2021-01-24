@@ -64,51 +64,106 @@
                                 @csrf
 
                                 <div class="form-group row">
-                                    <div class="col-md-4"></div>
+                                    <div class="col-md-2"></div>
                                     <button type="submit" class="btn btn-primary col-md-6" name="input" value="input">手動入力内容確定</button>
                                 </div>
                                 
                                 <div class="form-group row">
-                                    <label for="labelNumeOnGoing" class="col-md-4 col-form-label text-md-right">作業中の個数：</label>
+                                    <label for="labelNumOnGoing" class="col-md-2 col-12 col-form-label text-md-right">作業中の個数：</label>
 
-                                    <div class="col-md-6">
-                                        <input id="labelNumeOnGoing" type="number" class="form-control @error('labelNumeOnGoing') is-invalid @enderror" name="labelNumeOnGoing"  required value="{{ $nums[0]->labelNum}}">
+                                    <div class="col-md-4 col-6">
+                                        <input id="labelNumOnGoing" type="number" class="form-control @error('labelNumOnGoing') is-invalid @enderror" name="labelNumOnGoing" required value="{{ $nums['ongoing']}}">
                                         
-                                        @error('labelNumeOnGoing')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                        </div>
-
-                                        <!-- <button type="submit" class="btn btn-primary col-md-4" name="inputOnGoing" value="inputOnGoing">修正</button> -->
-                                </div>
-
-                                <div class="form-group row">
-                                    <div class="col-md-4"></div>
-                                    <button type="submit" class="btn btn-success col-md-2" name="plus" value="plus">プラス10</button>
-                                    <button type="submit" class="btn btn-danger col-md-2" name="minus" value="minus">マイナス10</button>
-                                    <button type="submit" class="btn btn-primary col-md-2" name="done" value="done">完了</button>
-                                </div>
-
-
-                                <div class="form-group row">
-
-                                    <label for="labelNumeDone" class="col-md-4 col-form-label text-md-right">完了済の個数：</label>
-
-                                    <div class="col-md-6">
-                                        <input id="labelNumeDone" type="number" class="form-control @error('labelNumeDone') is-invalid @enderror" name="labelNumeDone" value="{{ $nums[1]->labelNum}}" required>
-                                        
-                                        @error('labelNumeDone')
+                                        @error('labelNumOnGoing')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
                                         @enderror
                                     </div>
-                                
+
+                                    <button type="submit" class="btn btn-primary col-md-2 col-6" name="done" value="done">完了</button>
+
+
+                                        <!-- <button type="submit" class="btn btn-primary col-md-4" name="inputOnGoing" value="inputOnGoing">修正</button> -->
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-md-2"></div>
+                                    <button type="submit" class="btn btn-success col-md-2 col-6" name="plus" value="plus">プラス10</button>
+                                    <button type="submit" class="btn btn-danger col-md-2 col-6" name="minus" value="minus">マイナス10</button>
+                                </div>
+
+
+                                <div class="form-group row">
+
+                                    <label for="labelNumDone" class="col-md-2 col-6 col-form-label text-md-right">完了済の個数：</label>
+                                    <div class="col-md-2 col-6">
+                                        <input id="labelNumDone" type="number" class="form-control @error('labelNumDone') is-invalid @enderror" name="labelNumDone" value="{{ $nums['done']}}" required>
+                                        
+                                        @error('labelNumDone')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+
+                                    <label for="labelNumDoneBox" class="col-md-2 col-6 col-form-label text-md-right">完了済の箱数：</label>
+                                    <div class="col-md-2 col-6 col-form-label">
+                                        <strong>{{ $nums['done']}}</strong>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="form-group row">
+
+                                    <label for="labelNumQuotaBox " class="col-md-2 col-6 col-form-label text-md-right">必要個数／日：</label>
+                                    <div class="col-md-2 col-6 col-form-label">
+                                        <strong>{{ $nums['quota'] }} </strong>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group row"> <!-- 空行 --></div>
+
+                                <div class="form-group row"> 
+                                    <label for="labelNumInBox" class="col-md-2 col-6 col-form-label text-md-right">設定</label>
+                                </div>
+
+                                <div class="form-group row">
+
+                                    <label for="labelNumQuota " class="col-md-2  col-6 col-form-label text-md-right">ノルマの個数：</label>
+                                    <div class="col-md-2 col-6">
+                                        <input id="labelNumQuota" type="number" class="form-control @error('labelNumQuota') is-invalid @enderror" name="labelNumQuota" value="{{ $nums['quota']}}" required>
+                                        
+                                        @error('labelNumQuota')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+
+                                    <label for="labelNumQuotaBox " class="col-md-2  col-6 col-form-label text-md-right">ノルマの箱数：</label>
+                                    <div class="col-md-2 col-6 col-form-label">
+                                        <strong>{{ $nums['quota'] }} </strong>
+                                    </div>
                                 </div>
 
                                 
+
+                                <div class="form-group row">
+
+                                    <label for="labelNumInBox" class="col-md-2 col-6 col-form-label text-md-right">1箱当たりの個数：</label>
+                                    <div class="col-md-6 col-6">
+                                        <input id="labelNumInBox" type="number" class="form-control @error('labelNumInBox') is-invalid @enderror" name="labelNumInBox" value="{{ $nums['numInBox']}}" required>
+                                        
+                                        @error('labelNumInBox')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
                             </form>
 
                         </div>

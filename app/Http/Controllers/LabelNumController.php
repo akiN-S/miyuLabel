@@ -8,43 +8,46 @@ use App\Models\LabelNum;
 
 class LabelNumController extends Controller
 {
+
+    const TYPE_ON_GOING="ongoing";
+    const TYPE_DONE="done";
+    const TYPE_QUOTA="quota";
+    const TYPE_NUM_IN_BOX="numInBox";
+    
+    const COUNT_NUM = 10;
     //
     public function input(Request $request) {
-        $ID_ON_GOING=1;
-        $TYPE_ON_GOING="ongoing";
-        $ID_DONE=2;
-        $TYPE_DONE="done";
-        $COUNT_NUM = 10;
+        
 
         if ($request->input != NULL){
-            $num = LabelNum::where('type', $TYPE_ON_GOING)->get();
-            $num[0]->labelNum = $request->labelNumeOnGoing;
-            $num[0]->save();
+            $num = LabelNum::where('type', self::TYPE_ON_GOING)->first();
+            $num->labelNum = $request->labelNumOnGoing;
+            $num->save();
 
-            $num = LabelNum::where('type', $TYPE_DONE)->get();
-            $num[0]->labelNum = $request->labelNumeDone;
-            $num[0]->save();
+            $num = LabelNum::where('type', self::TYPE_DONE)->first();
+            $num->labelNum = $request->labelNumDone;
+            $num->save();
 
-            // var_dump($request->labelNumeOnGoing);
+            // var_dump($request->labelNumOnGoing);
 
         }else if ($request->plus != NULL){
-            $num = LabelNum::where('type', $TYPE_ON_GOING)->get();
-            $num[0]->labelNum = $num[0]->labelNum + $COUNT_NUM ;
-            $num[0]->save();
+            $num = LabelNum::where('type', self::TYPE_ON_GOING)->first();
+            $num->labelNum = $num->labelNum + $COUNT_NUM ;
+            $num->save();
 
         }else if ($request->minus != NULL){
-            $num = LabelNum::where('type', $TYPE_ON_GOING)->get();
-            $num[0]->labelNum = $num[0]->labelNum - $COUNT_NUM ;
-            $num[0]->save();
+            $num = LabelNum::where('type', self::TYPE_ON_GOING)->first();
+            $num->labelNum = $num->labelNum - $COUNT_NUM ;
+            $num->save();
 
         }else if ($request->done != NULL){
-            $numOnGoing = LabelNum::where('type', $TYPE_ON_GOING)->get();
-            $numOnGoing[0]->labelNum = 0;
-            $numOnGoing[0]->save();
+            $numOnGoing = LabelNum::where('type', self::TYPE_ON_GOING)->first();
+            $numOnGoing->labelNum = 0;
+            $numOnGoing->save();
 
-            $numDone = LabelNum::where('type', $TYPE_DONE)->get();
-            $numDone[0]->labelNum = $numDone[0]->labelNum + $request->labelNumeOnGoing;
-            $numDone[0]->save();
+            $numDone = LabelNum::where('type', self::TYPE_DONE)->first();
+            $numDone->labelNum = $numDone->labelNum + $request->labelNumOnGoing;
+            $numDone->save();
         
         }
 
@@ -56,7 +59,28 @@ class LabelNumController extends Controller
 
 
     public function show(){
-        $nums = LabelNum::all();
+        $nums = array();
+
+        $targetType = self::TYPE_ON_GOING;
+        $num = LabelNum::where('type', $targetType)->first();
+        if($num === NULL) $num = 0;
+        $nums += array($targetType => $num);
+
+        $targetType = self::TYPE_DONE;
+        $num = LabelNum::where('type', $targetType)->first();
+        if($num === NULL) $num = 0;
+        $nums += array($targetType => $num);
+
+        $targetType = self::TYPE_QUOTA;
+        $num = LabelNum::where('type', $targetType)->first();
+        if($num === NULL) $num = 0;
+        $nums += array($targetType => $num);
+
+        $targetType = self::TYPE_NUM_IN_BOX;
+        $num = LabelNum::where('type', $targetType)->first();
+        if($num === NULL) $num = 0;
+        $nums += array($targetType => $num);
+
         return view('labelNum', ['nums' => $nums]);
     }
 
