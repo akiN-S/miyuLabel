@@ -47,17 +47,21 @@ class LabelNumController extends Controller
             $num->labelNum = $request->labelNumInBox;
             $num->save();
 
-
+            session()->flash('flash_message', '入力した内容を反映しました');
 
         }else if ($request->plus != NULL){
             $num = LabelNum::where('type', self::TYPE_ON_GOING)->first();
             $num->labelNum = $num->labelNum + self::COUNT_NUM ;
             $num->save();
 
+            session()->flash('flash_message', 'プラス10しました');
+
         }else if ($request->minus != NULL){
             $num = LabelNum::where('type', self::TYPE_ON_GOING)->first();
             $num->labelNum = $num->labelNum - self::COUNT_NUM ;
             $num->save();
+
+            session()->flash('flash_message', 'マイナス10しました');
 
         }else if ($request->done != NULL){
             $numOnGoing = LabelNum::where('type', self::TYPE_ON_GOING)->first();
@@ -67,6 +71,8 @@ class LabelNumController extends Controller
             $numDone = LabelNum::where('type', self::TYPE_DONE)->first();
             $numDone->labelNum = $numDone->labelNum + $request->labelNumOnGoing;
             $numDone->save();
+
+            session()->flash('flash_message', '完了！次の箱を用意してください');
         
         }
 

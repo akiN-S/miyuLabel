@@ -7,6 +7,19 @@
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <!-- Styles -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+        <!-- Scripts -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script>
+            @if (session('flash_message'))
+                $(function () {
+                        toastr.success('{{ session('flash_message') }}');
+                });
+            @endif
+        </script>
+
+
         <style>
             html, body {
                 background-color: #fff;
