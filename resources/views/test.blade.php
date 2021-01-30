@@ -60,7 +60,7 @@
                         <div class="card-header">美雪の内職のお手伝い</div>
 
                         <div class="card-body">
-                            <form method="POST" action="{{ action('LabelNumController@input') }}">
+                            <form method="POST" action="{{ action('LabelNumController@testPost') }}">
                                 @csrf
 
                                 <div class="form-group row">

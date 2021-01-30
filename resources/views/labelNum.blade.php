@@ -68,7 +68,7 @@
     <body>
         <div class="container-fluid">
             <div class="row justify-content-center">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">美雪の内職のお手伝い</div>
 
@@ -85,7 +85,7 @@
                                     <label for="labelNumOnGoing" class="col-md-2 col-12 col-form-label text-md-right">作業中の個数：</label>
 
                                     <div class="col-md-4 col-6">
-                                        <input id="labelNumOnGoing" type="number" class="form-control @error('labelNumOnGoing') is-invalid @enderror" name="labelNumOnGoing" required value="{{ $nums['ongoing'] }}">
+                                        <input id="labelNumOnGoing" type="number" class="form-control @error('labelNumOnGoing') is-invalid @enderror" name="labelNumOnGoing" required value="{{ $labelNum->ongoing }}">
                                         
                                         @error('labelNumOnGoing')
                                             <span class="invalid-feedback" role="alert">
@@ -111,7 +111,7 @@
 
                                     <label for="labelNumDone" class="col-md-2 col-6 col-form-label text-md-right">完了済の個数：</label>
                                     <div class="col-md-2 col-6">
-                                        <input id="labelNumDone" type="number" class="form-control @error('labelNumDone') is-invalid @enderror" name="labelNumDone" value="{{ $nums['done'] }}" required>
+                                        <input id="labelNumDone" type="number" class="form-control @error('labelNumDone') is-invalid @enderror" name="labelNumDone" value="{{ $labelNum->done }}" required>
                                         
                                         @error('labelNumDone')
                                             <span class="invalid-feedback" role="alert">
@@ -122,7 +122,7 @@
 
                                     <label for="labelNumDoneBox" class="col-md-2 col-6 col-form-label text-md-right">完了済の箱数：</label>
                                     <div class="col-md-2 col-6 col-form-label">
-                                        <strong>{{ $nums['doneBox'] }}</strong>
+                                        <strong>{{ $labelNum->doneBox }}</strong>
                                     </div>
                                 </div>
 
@@ -130,12 +130,12 @@
 
                                     <label for="labelNumLeft" class="col-md-2 col-6 col-form-label text-md-right">残個数：</label>
                                     <div class="col-md-2 col-6 col-form-label">
-                                        <strong>{{ $nums['labelNumLeft']  }} </strong>
+                                        <strong>{{ $labelNum->left  }} </strong>
                                     </div>
 
                                     <label for="labelNumLeftBox" class="col-md-2 col-6 col-form-label text-md-right">残箱数：</label>
                                     <div class="col-md-2 col-6 col-form-label">
-                                        <strong>{{ $nums['labelNumLeftBox']  }} </strong>
+                                        <strong>{{ $labelNum->leftBox  }} </strong>
                                     </div>
                                 </div>
 
@@ -145,7 +145,7 @@
 
                                     <label for="quotaPerDay" class="col-md-2 col-6 col-form-label text-md-right">必要個数／日：</label>
                                     <div class="col-md-2 col-6 col-form-label">
-                                        <strong>{{ $nums['quotaPerDay']  }} </strong>
+                                        <strong>{{ round($labelNum->quotaPerDay) }} </strong>
                                     </div>
                                 </div>
 
@@ -160,7 +160,7 @@
 
                                     <label for="deliveryDate" class="col-md-2  col-6 col-form-label text-md-right">納品日：</label>
                                     <div class="col-md-2 col-6">
-                                        <input id="deliveryDate" type="date" class="form-control @error('deliveryDate') is-invalid @enderror" name="deliveryDate" value="{{ $nums['deliveryDate'] }}" required>
+                                        <input id="deliveryDate" type="date" class="form-control @error('deliveryDate') is-invalid @enderror" name="deliveryDate" value="{{ $labelNum->deliveryDateStr }}" required>
                                         
                                         @error('deliveryDate')
                                             <span class="invalid-feedback" role="alert">
@@ -171,7 +171,7 @@
 
                                     <label for="daysUntilDelivery" class="col-md-2 col-6 col-form-label text-md-right">残日数</label>
                                     <div class="col-md-2 col-6 col-form-label">
-                                        <strong>{{ $nums['daysUntilDelivery']  }} </strong> ※今日を含む
+                                        <strong>{{ $labelNum->daysUntilDelivery }} </strong> ※今日を含む
                                     </div>
                                 </div>
 
@@ -180,7 +180,7 @@
 
                                     <label for="labelNumQuota " class="col-md-2  col-6 col-form-label text-md-right">ノルマの個数：</label>
                                     <div class="col-md-2 col-6">
-                                        <input id="labelNumQuota" type="number" class="form-control @error('labelNumQuota') is-invalid @enderror" name="labelNumQuota" value="{{ $nums['quota'] }}" required>
+                                        <input id="labelNumQuota" type="number" class="form-control @error('labelNumQuota') is-invalid @enderror" name="labelNumQuota" value="{{ $labelNum->quota }}" required>
                                         
                                         @error('labelNumQuota')
                                             <span class="invalid-feedback" role="alert">
@@ -191,7 +191,7 @@
 
                                     <label for="labelNumQuotaBox " class="col-md-2  col-6 col-form-label text-md-right">ノルマの箱数：</label>
                                     <div class="col-md-2 col-6 col-form-label">
-                                        <strong>{{ $nums['quotaBox']  }} </strong>
+                                        <strong>{{ $labelNum->quotaBox }} </strong>
                                     </div>
                                 </div>
 
@@ -199,7 +199,7 @@
 
                                     <label for="labelNumInBox" class="col-md-2 col-6 col-form-label text-md-right">1箱当たりの個数：</label>
                                     <div class="col-md-6 col-6">
-                                        <input id="labelNumInBox" type="number" class="form-control @error('labelNumInBox') is-invalid @enderror" name="labelNumInBox" value="{{ $nums['numInBox'] }}" required>
+                                        <input id="labelNumInBox" type="number" class="form-control @error('labelNumInBox') is-invalid @enderror" name="labelNumInBox" value="{{ $labelNum->numInBox }}" required>
                                         
                                         @error('labelNumInBox')
                                             <span class="invalid-feedback" role="alert">

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LabelNum;
+use App\Models\LabelOngoingNum;
+use App\Models\LabelDoneNum;
+use App\Models\LabelSetting;
 
 
 class LabelNumController extends Controller
@@ -27,150 +30,114 @@ class LabelNumController extends Controller
         
 
         if ($request->input != NULL){
-            $num = LabelNum::where('type', self::TYPE_ON_GOING)->first();
-            $num->labelNum = $request->labelNumOnGoing;
-            $num->save();
+            
+            $ongoingSum = LabelOngoingNum::sum("ongoing");
+            if ($ongoingSum != $request->labelNumOnGoing){
+                $ongoingInsert = new LabelOngoingNum();
+                $ongoingInsert->ongoing = $request->labelNumOnGoing - $ongoingSum;
+                $ongoingInsert->save();
+            }
 
-            $num = LabelNum::where('type', self::TYPE_DONE)->first();
-            $num->labelNum = $request->labelNumDone;
-            $num->save();
+            $doneSum = LabelDoneNum::sum("done");
+            if ($doneSum != $request->labelNumDone){
+                $doneInsert = new LabelDoneNum();
+                $doneInsert->done = $request->labelNumDone - $doneSum;
+                $doneInsert->save();
+            }
 
-            $num = LabelNum::where('type', self::TYPE_QUOTA)->first();
-            $num->labelNum = $request->labelNumQuota;
-            $num->save();
-
-            $num = LabelNum::where('type', self::TYPE_DELIVERY_DATE)->first();
-            $num->labelNum = strtotime($request->deliveryDate);
-            $num->save();
-
-            $num = LabelNum::where('type', self::TYPE_NUM_IN_BOX)->first();
-            $num->labelNum = $request->labelNumInBox;
-            $num->save();
+            $setting = LabelSetting::all()->first();
+            $settingInput = new LabelSetting();
+            $settingInput->quota = $request->labelNumQuota;
+            $settingInput->deliveryDate = strtotime($request->deliveryDate);
+            $settingInput->numInBox = $request->labelNumInBox;
+            if($setting != $settingInput){
+                $setting->quota = $request->labelNumQuota;
+                $setting->deliveryDate = strtotime($request->deliveryDate);
+                $setting->numInBox = $request->labelNumInBox;
+                $setting ->save();
+            }
 
             session()->flash('flash_message', '入力した内容を反映しました');
 
         }else if ($request->plus != NULL){
-            $num = LabelNum::where('type', self::TYPE_ON_GOING)->first();
-            $num->labelNum = $num->labelNum + self::COUNT_NUM ;
-            $num->save();
+            $ongoingInsert = new LabelOngoingNum();
+            $ongoingInsert->ongoing = self::COUNT_NUM;
+            $ongoingInsert->save();
 
             session()->flash('flash_message', 'プラス10しました');
 
         }else if ($request->minus != NULL){
-            $num = LabelNum::where('type', self::TYPE_ON_GOING)->first();
-            $num->labelNum = $num->labelNum - self::COUNT_NUM ;
-            $num->save();
+            $ongoingInsert = new LabelOngoingNum();
+            $ongoingInsert->ongoing = self::COUNT_NUM * (-1);
+            $ongoingInsert->save();
 
             session()->flash('flash_message', 'マイナス10しました');
 
         }else if ($request->done != NULL){
-            $numOnGoing = LabelNum::where('type', self::TYPE_ON_GOING)->first();
-            $numOnGoing->labelNum = 0;
-            $numOnGoing->save();
 
-            $numDone = LabelNum::where('type', self::TYPE_DONE)->first();
-            $numDone->labelNum = $numDone->labelNum + $request->labelNumOnGoing;
-            $numDone->save();
+
+            $ongoingInsert = new LabelOngoingNum();
+            $ongoingInsert->ongoing = $request->labelNumOnGoing * (-1);
+            $ongoingInsert->save();
+
+
+            $doneInsert = new LabelDoneNum();
+            $doneInsert->done = $request->labelNumOnGoing;
+            $doneInsert->save();
 
             session()->flash('flash_message', '完了！次の箱を用意してください');
         
         }
 
-        // $nums = LabelNum::all();
-        // return view('labelNum', ['nums' => $nums]);
-
         return redirect('/');
-
-
     }
 
 
     public function show(){
         $nums = array();
         $numInBox = 1;
-
-
-        $targetType = self::TYPE_NUM_IN_BOX;
-        $num = LabelNum::where('type', $targetType)->first();
-        if($num === NULL) {
-            $num = new LabelNum();
-            $num->type = $targetType;
-            $num->labelNum = 1;
-            $num->save();
+        
+        $labelOngoingNum = LabelOngoingNum::all()->first();
+        if($labelOngoingNum === NULL){
+            $labelOngoingNum = new LabelOngoingNum();
+            $labelOngoingNum->ongoing = 0;
+            $labelOngoingNum->save();
         }
-        $nums += array($targetType => $num->labelNum);
-        $numInBox = $num->labelNum;
 
-        $targetType = self::TYPE_DELIVERY_DATE ;
-        $num = LabelNum::where('type', $targetType)->first();
-        if($num === NULL) {
-            $num = new LabelNum();
-            $num->type = $targetType;
-            $num->labelNum = strtotime(date('Y-m-d'));
-            $num->save();
+        $labelDoneNum = LabelDoneNum::all()->first();
+        if($labelDoneNum === NULL){
+            $labelDoneNum = new LabelDoneNum();
+            $labelDoneNum->done = 0;
+            $labelDoneNum->save();
         }
-        $nums += array($targetType=> date('Y-m-d', $num->labelNum));
-        $deliveryDate = $num->labelNum;
 
-        $targetType = self::TYPE_DYAS_UNTIL_DELIVERY;
-        $daysUntilDelivery = ($deliveryDate - strtotime(date('Y-m-d'))) / (60 * 60 * 24) +1;
-        $nums += array($targetType => $daysUntilDelivery);
-
-        $targetType = self::TYPE_QUOTA;
-        $num = LabelNum::where('type', $targetType)->first();
-        if($num === NULL) {
-            $num = new LabelNum();
-            $num->type = $targetType;
-            $num->labelNum = 0;
-            $num->save();
+        $setting = LabelSetting::all()->first();
+        if($setting === NULL){
+            $setting = new LabelSetting();
+            $setting ->quota = 0;
+            $setting ->deliveryDate = strtotime(date('Y-m-d'));
+            $setting ->numInBox = 1;
+            $setting ->save();
         }
-        $nums += array($targetType => $num->labelNum);
-        $numQuota = $num->labelNum;
 
+        $labelNum = new LabelNum();
+        $labelNum->ongoing = LabelOngoingNum::sum("ongoing");
+        $labelNum->done = LabelDoneNum::sum("done");
+        $labelNum->quota = $setting ->quota;
+        $labelNum->deliveryDateStr = date('Y-m-d', $setting->deliveryDate);
+        $labelNum->numInBox = $setting->numInBox;
+        
+        $labelNum->daysUntilDelivery = ($setting->deliveryDate - strtotime(date('Y-m-d'))) / (60 * 60 * 24) +1;;
 
+        $labelNum->doneBox = $labelNum->done / $labelNum->numInBox;
+        $labelNum->quotaBox = $labelNum->quota / $labelNum->numInBox;
 
-        $targetType = self::TYPE_ON_GOING;
-        $num = LabelNum::where('type', $targetType)->first();
-        if($num === NULL) {
-            $num = new LabelNum();
-            $num->type = $targetType;
-            $num->labelNum = 0;
-            $num->save();
-        }
-        $nums += array($targetType => $num->labelNum);
+        $labelNum->left = $labelNum->quota - $labelNum->done;
+        $labelNum->leftBox = $labelNum->quotaBox - $labelNum->doneBox;
 
-        $targetType = self::TYPE_DONE;
-        $num = LabelNum::where('type', $targetType)->first();
-        if($num === NULL) {
-            $num = new LabelNum();
-            $num->type = $targetType;
-            $num->labelNum = 0;
-            $num->save();
-        }
-        $nums += array($targetType => $num->labelNum);
-        $numDone = $num->labelNum;
+        $labelNum->quotaPerDay = $labelNum->left / $labelNum->daysUntilDelivery;
 
-        $targetType = self::TYPE_DONE_BOX;
-        $numDoneBox = $numDone / $numInBox;
-        $nums += array($targetType => $numDoneBox);
-
-        $targetType = self::TYPE_QUOTA_BOX;
-        $numQuotaBox = $numQuota / $numInBox;
-        $nums += array($targetType => $numQuotaBox);
-
-        $targetType = self::TYPE_LEFT;
-        $nums += array($targetType => $numQuota - $numDone);
-
-        $targetType = self::TYPE_LEFT_BOX;
-        $nums += array($targetType => $numQuotaBox - $numDoneBox);
-
-        $targetType = self::TYPE_QUOTA_PER_DAY;
-        $nums += array($targetType => ($numQuota - $numDone) / $daysUntilDelivery);
-
-
-       
-
-        return view('labelNum', ['nums' => $nums]);
+        return view('labelNum', ['labelNum' => $labelNum]);
     }
 
 
@@ -180,10 +147,10 @@ class LabelNumController extends Controller
     }
 
     public function testPost(Request $request){
-        $nums = LabelNum::all();
-        var_dump(strtotime($request->deliveryDate));
-
-        return view('test', ['nums' => $nums]);
+        $num = LabelOngoingNum::sum("ongoing");
+        var_dump($num);
+        return view('test', ['num' => $num]);
     }
+
 
 }
