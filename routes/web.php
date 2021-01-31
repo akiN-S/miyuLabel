@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'LabelNumController@show');
 Route::get('/test', 'LabelNumController@test');
 
+Route::get('/dailyCount', 'LabelNumController@dailyCount');
+
+
 
 Route::post('/LabelNum/input', 'LabelNumController@input');
 Route::post('/LabelNum/testPost', 'LabelNumController@testPost');
