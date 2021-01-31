@@ -5,20 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LabelSetting extends Model
+class Product extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'id',
-        'quota',
-        'deliveryDate',
-        'numInBox',
-        'startDate',
         'name',
-        'explanation',
         'unitPrice',
-        'isSelected',
-        'isDeleted',
+        'selected',
+        'explanation',
     ]; 
 }

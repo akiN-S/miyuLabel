@@ -158,17 +158,12 @@
     </script>
 
     <body>
+        @include('navbar')
         <div class="container-fluid">
             <div class="row justify-content-center">
                 <div class="col-md-10 col-12">
                     <div class="card">
-                        <div class="card-header">
-                            <div class="form-group row">
-                                <div class="col-md-2"> <a href="{{ action('LabelNumController@show') }}">美雪の内職のお手伝いトップ</a></div>
-                                <div class="col-md-4"> <a href="{{ action('LabelNumController@dailyCount') }}">日別個数グラフの表示</a></div>
-                            </div>
-                        </div>
-
+                        <div class="card-header">日別個数グラフの表示</a></div>
 
                         <div class="card-body">
                             <form method="GET" action="{{ action('LabelNumController@dailyCount') }}">

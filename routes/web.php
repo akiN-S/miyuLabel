@@ -22,6 +22,8 @@ Route::get('/test', 'LabelNumController@test');
 
 Route::get('/dailyCount', 'LabelNumController@dailyCount');
 
+Route::get('/labelSetting', 'LabelSettingController@show');
+
 
 
 Route::post('/LabelNum/input', 'LabelNumController@input');

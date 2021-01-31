@@ -11,5 +11,6 @@ class LabelDoneNum extends Model
     protected $fillable = [
         'id',
         'done',
+        'settingId',
     ]; 
 }

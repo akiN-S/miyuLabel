@@ -66,20 +66,22 @@
         </style>
     </head>
     <body>
+        @include('navbar')
         <div class="container-fluid">
             <div class="row justify-content-center">
                 <div class="col-md-10">
                     <div class="card">
-                        <div class="card-header">
-                            <div class="form-group row">
+                        <div class="card-header"> 美雪の内職のお手伝い
+                            <!-- <div class="form-group row">
                                 <div class="col-md-2"> <a href="{{ action('LabelNumController@show') }}">美雪の内職のお手伝いトップ</a></div>
                                 <div class="col-md-4"> <a href="{{ action('LabelNumController@dailyCount') }}">日別個数グラフの表示</a></div>
-                            </div>
+                            </div> -->
                         </div>
 
                         <div class="card-body">
                             <form method="POST" action="{{ action('LabelNumController@input') }}">
                                 @csrf
+                                <input type="hidden" name="settingId" value="{{ $labelNum->settingId }}">
 
                                 <div class="form-group row">
                                     <div class="col-md-2"></div>

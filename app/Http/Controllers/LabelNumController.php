@@ -8,6 +8,8 @@ use App\Models\LabelOngoingNum;
 use App\Models\LabelDoneNum;
 use App\Models\LabelSetting;
 
+use App\Lib\MyFuncs;
+
 
 class LabelNumController extends Controller
 {
@@ -15,25 +17,27 @@ class LabelNumController extends Controller
     const COUNT_NUM = 10;
     //
     public function input(Request $request) {
-        
 
+        $setting = LabelSetting::where('id', $request->settingId)->first();
+        var_dump($setting);
         if ($request->input != NULL){ 
             
-            $ongoingSum = LabelOngoingNum::sum("ongoing");
+            $ongoingSum = LabelOngoingNum::where('settingId', $setting->id)->sum("ongoing");;
             if ($ongoingSum != $request->labelNumOnGoing){
                 $ongoingInsert = new LabelOngoingNum();
                 $ongoingInsert->ongoing = $request->labelNumOnGoing - $ongoingSum;
+                $ongoingInsert->settingId = $setting->id;
                 $ongoingInsert->save();
             }
 
-            $doneSum = LabelDoneNum::sum("done");
+            $doneSum = LabelDoneNum::where('settingId', $setting->id)->sum("done");
             if ($doneSum != $request->labelNumDone){
                 $doneInsert = new LabelDoneNum();
                 $doneInsert->done = $request->labelNumDone - $doneSum;
+                $doneInsert->settingId = $setting->id;
                 $doneInsert->save();
             }
-
-            $setting = LabelSetting::all()->first();
+            
             $settingInput = new LabelSetting();
             $settingInput->quota = $request->labelNumQuota;
             $settingInput->deliveryDate = strtotime($request->deliveryDate);
@@ -50,6 +54,7 @@ class LabelNumController extends Controller
         }else if ($request->plus != NULL){
             $ongoingInsert = new LabelOngoingNum();
             $ongoingInsert->ongoing = self::COUNT_NUM;
+            $ongoingInsert->settingId = $setting->id;
             $ongoingInsert->save();
 
             session()->flash('flash_message', 'プラス10しました');
@@ -57,6 +62,7 @@ class LabelNumController extends Controller
         }else if ($request->minus != NULL){
             $ongoingInsert = new LabelOngoingNum();
             $ongoingInsert->ongoing = self::COUNT_NUM * (-1);
+            $ongoingInsert->settingId = $setting->id;
             $ongoingInsert->save();
 
             session()->flash('flash_message', 'マイナス10しました');
@@ -64,11 +70,13 @@ class LabelNumController extends Controller
         }else if ($request->done != NULL){
             $ongoingInsert = new LabelOngoingNum();
             $ongoingInsert->ongoing = $request->labelNumOnGoing * (-1);
+            $ongoingInsert->settingId = $setting->id;
             $ongoingInsert->save();
 
 
             $doneInsert = new LabelDoneNum();
             $doneInsert->done = $request->labelNumOnGoing;
+            $doneInsert->settingId = $setting->id;
             $doneInsert->save();
 
             session()->flash('flash_message', '完了！次の箱を用意してください');
@@ -83,10 +91,25 @@ class LabelNumController extends Controller
         $nums = array();
         $numInBox = 1;
         
+        $setting = LabelSetting::where('isSelected', true)->first();
+        if($setting === NULL){
+            $setting = new LabelSetting();
+            $setting->quota = 0;
+            $setting->deliveryDate = strtotime(date('Y-m-d'));
+            $setting->numInBox = 1;
+            $setting->startDate = strtotime(date('Y-m-d'));
+            $setting->unitPrice = 0;
+            $setting->name = 'product';
+            $setting->isSelected = true;
+            $setting->save();
+        }
+        $setting = LabelSetting::where('isSelected', true)->first();
+
         $labelOngoingNum = LabelOngoingNum::all()->first();
         if($labelOngoingNum === NULL){
             $labelOngoingNum = new LabelOngoingNum();
             $labelOngoingNum->ongoing = 0;
+            $labelOngoingNum->settingId = $setting->id;
             $labelOngoingNum->save();
         }
 
@@ -94,34 +117,11 @@ class LabelNumController extends Controller
         if($labelDoneNum === NULL){
             $labelDoneNum = new LabelDoneNum();
             $labelDoneNum->done = 0;
+            $labelDoneNum->settingId = $setting->id;
             $labelDoneNum->save();
         }
-
-        $setting = LabelSetting::all()->first();
-        if($setting === NULL){
-            $setting = new LabelSetting();
-            $setting ->quota = 0;
-            $setting ->deliveryDate = strtotime(date('Y-m-d'));
-            $setting ->numInBox = 1;
-            $setting ->save();
-        }
-
-        $labelNum = new LabelNum();
-        $labelNum->ongoing = LabelOngoingNum::sum("ongoing");
-        $labelNum->done = LabelDoneNum::sum("done");
-        $labelNum->quota = $setting ->quota;
-        $labelNum->deliveryDateStr = date('Y-m-d', $setting->deliveryDate);
-        $labelNum->numInBox = $setting->numInBox;
         
-        $labelNum->daysUntilDelivery = ($setting->deliveryDate - strtotime(date('Y-m-d'))) / (60 * 60 * 24) +1;;
-
-        $labelNum->doneBox = $labelNum->done / $labelNum->numInBox;
-        $labelNum->quotaBox = $labelNum->quota / $labelNum->numInBox;
-
-        $labelNum->left = $labelNum->quota - $labelNum->done;
-        $labelNum->leftBox = $labelNum->quotaBox - $labelNum->doneBox;
-
-        $labelNum->quotaPerDay = $labelNum->left / $labelNum->daysUntilDelivery;
+        $labelNum = MyFuncs::getLabelNum($setting);
 
         return view('labelNum', ['labelNum' => $labelNum]);
     }

@@ -11,5 +11,6 @@ class LabelOngoingNum extends Model
     protected $fillable = [
         'id',
         'ongoing',
+        'settingId',
     ]; 
 }

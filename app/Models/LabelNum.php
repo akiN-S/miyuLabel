@@ -9,18 +9,26 @@ class LabelNum extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'settingId',
+        'name',
+        'numInBox',
+        'quota',
+        'deliveryDateStr',
+        'startDateStr',
+        'unitPrice',
+        'isSelected',
+
         'ongoing',
         'done',
+
         'doneBox',
         'left',
         'leftBox',
-        'quota',
         'quotaBox',
         'quotaPerDay',
-        'deliveryDateStr',
-        'numInBox',
         'daysUntilDelivery',
         'quotaPerDay',
+        'price',
     ]; 
 
 }
