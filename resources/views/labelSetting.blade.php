@@ -101,8 +101,8 @@
                                                     <tr>
                                                         <td>{{ $labelNum->isSelected }}</td>
                                                         <td>{{ $labelNum->name }}</td>
-                                                        <td>{{ $labelNum->deliveryDateStr }}</td>
                                                         <td>{{ $labelNum->startDateStr }}</td>
+                                                        <td>{{ $labelNum->deliveryDateStr }}</td>
                                                         <td>{{ $labelNum->quota }}</td>
                                                         <td>{{ $labelNum->numInBox }}</td>
                                                         <td>{{ $labelNum->done }}</td>

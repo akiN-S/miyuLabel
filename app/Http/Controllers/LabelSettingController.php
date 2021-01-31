@@ -19,7 +19,6 @@ class LabelSettingController extends Controller
         $labelNums = array();
         $setting = LabelSetting::where('isSelected', true)->first();
         $labelNums += array(MyFuncs::getLabelNum($setting));
-        var_dump($labelNums);
         
         return view('labelSetting', ['labelNums'=>$labelNums]);
     }
