@@ -12,18 +12,6 @@ use App\Models\LabelSetting;
 class LabelNumController extends Controller
 {
 
-    const TYPE_ON_GOING="ongoing";
-    const TYPE_DONE="done";
-    const TYPE_DONE_BOX="doneBox";
-    const TYPE_LEFT="labelNumLeft";
-    const TYPE_LEFT_BOX="labelNumLeftBox";
-    const TYPE_QUOTA="quota";
-    const TYPE_QUOTA_BOX="quotaBox";
-    const TYPE_QUOTA_PER_DAY="quotaPerDay";
-    const TYPE_DELIVERY_DATE="deliveryDate";
-    const TYPE_NUM_IN_BOX="numInBox";
-    const TYPE_DYAS_UNTIL_DELIVERY="daysUntilDelivery";
-    
     const COUNT_NUM = 10;
     //
     public function input(Request $request) {
@@ -142,8 +130,21 @@ class LabelNumController extends Controller
 
 
     public function test(){
-        $nums = LabelNum::all();
-        return view('test', ['nums' => $nums]);
+
+        
+        $test = LabelDoneNum::whereYear('created_at', 2021)
+        ->whereMonth('created_at', 1)
+        ->orderBy('created_at')
+        ->get()
+        ->groupBy(function ($row) {
+            return $row->created_at->format('d');
+        })
+        ->map(function ($day) {
+            return $day->sum('done');
+        });
+
+        var_dump($test);
+        return view('test');
     }
 
     public function testPost(Request $request){
