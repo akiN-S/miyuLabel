@@ -6,7 +6,21 @@
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+        <!-- Scripts -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script>
+            @if (session('flash_message'))
+                $(function () {
+                        toastr.warning('{{ session('flash_message') }}');
+                });
+            @endif
+        </script>
+
         <!-- Styles -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+
         <style>
             html, body {
                 background-color: #fff;
@@ -76,21 +90,23 @@
                     },
                     title: {                           //タイトル設定
                         display: true,                 //表示設定
-                        text: 'タイトル'                //ラベル
+                        text: '{{ $datesInfo['targetYear'].'年'.$datesInfo['targetMonth'].'月の日別グラフ' }}'               //ラベル
                     },
                     scales: {                          //軸設定
                         yAxes: [{                      //y軸設定
                             display: true,             //表示設定
                             scaleLabel: {              //軸ラベル設定
                                 display: true,          //表示設定
-                                labelString: '縦軸ラベル',  //ラベル
+                                labelString: '個数',  //ラベル
+                            }, ticks: {
+                                min: 0,
                             },
                         }],
                         xAxes: [{                         //x軸設定
                             display: true,                //表示設定
                             scaleLabel: {                 //軸ラベル設定
                                 display: true,             //表示設定
-                                labelString: '横軸ラベル',  //ラベル
+                                labelString: '日付',  //ラベル
                             },
                         }],
                     },
@@ -137,21 +153,35 @@
                     });
                 }
             });
-            
+
         }
     </script>
-
 
     <body>
         <div class="container-fluid">
             <div class="row justify-content-center">
-                <div class="col-md-10">
+                <div class="col-md-10 col-12">
                     <div class="card">
-                        <div class="card-header">美雪の内職のお手伝い - 日別カウント</div>
+                        <div class="card-header">
+                            <div class="form-group row">
+                                <div class="col-md-2"> <a href="{{ action('LabelNumController@show') }}">美雪の内職のお手伝いトップ</a></div>
+                                <div class="col-md-4"> <a href="{{ action('LabelNumController@dailyCount') }}">日別個数グラフの表示</a></div>
+                            </div>
+                        </div>
+
 
                         <div class="card-body">
                             <form method="GET" action="{{ action('LabelNumController@dailyCount') }}">
                                 @csrf
+                                <div class="form-group row">
+                                    <div class="col-md-2 col-7">
+                                        {{ Form::select('year', $datesInfo['selectionYear'], $datesInfo['targetYear']) }} 年
+                                        {{ Form::select('month', $datesInfo['selectionMonth'], $datesInfo['targetMonth']) }} 月
+                                    </div>
+                                    <div class="col-md-4 col-5">
+                                        <button type="submit" class="btn btn-primary col-md-2 col-6" name="done" value="done">表示</button>
+                                    </div>
+                                </div>
 
                             </form>
                             <canvas id="canvas"></canvas>

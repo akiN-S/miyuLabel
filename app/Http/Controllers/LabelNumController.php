@@ -17,7 +17,7 @@ class LabelNumController extends Controller
     public function input(Request $request) {
         
 
-        if ($request->input != NULL){
+        if ($request->input != NULL){ 
             
             $ongoingSum = LabelOngoingNum::sum("ongoing");
             if ($ongoingSum != $request->labelNumOnGoing){
@@ -62,8 +62,6 @@ class LabelNumController extends Controller
             session()->flash('flash_message', 'マイナス10しました');
 
         }else if ($request->done != NULL){
-
-
             $ongoingInsert = new LabelOngoingNum();
             $ongoingInsert->ongoing = $request->labelNumOnGoing * (-1);
             $ongoingInsert->save();
@@ -128,20 +126,31 @@ class LabelNumController extends Controller
         return view('labelNum', ['labelNum' => $labelNum]);
     }
 
-    public function dailyCount(){
-        $setYear = 2021;
-        $setMonth = 1;
 
-        $dailyCountData = array();
-        $dailyCountLabel = array();
+    public function dailyCount(Request $request){
+        $dailyCountData = array(); // array for daily total number
+        $dailyCountLabel = array(); // array for a month of days as a graph label
+        $datesInfo = array(); // array to store date information for view
+        $date = new \DateTime(); // getting today date
 
-        $date = new \DateTime();
-        $firstDay  = (int) $date->setDate($setYear, $setMonth, 1)->format('d'); // 日を1で固定値を入れている
-        $lastDay  = (int) $date->setDate($setYear, $setMonth, 1)->format('t'); // 日を1で固定値を入れている
+        $thisYear = (int) $date->format('Y'); // getting this year of today
+        $thisMonth = (int) $date->format('m');  // getting this month of today
 
+        if($request->year !== NULL && $request->month !== NULL){ // using parameters for target year and month if there are
+            $targetYear = $request->year;
+            $targetMonth = $request->month;
+        }else{ // using this year and month of today for tartgt year and month if there are no parameters
+            $targetYear = $thisYear;
+            $targetMonth = $thisMonth;
+        }
+
+        // getting first and last days of the target year and month
+        $firstDay  = (int) $date->setDate($targetYear, $targetMonth, 1)->format('d'); // 1 is fixed date for a month
+        $lastDay  = (int) $date->setDate($targetYear, $targetMonth, 1)->format('t'); // 1 is fixed date for a month
         
-        $dailyCountSum = LabelDoneNum::whereYear('created_at', $setYear)
-        ->whereMonth('created_at', $setMonth)
+        // counting daily total
+        $dailyCountSum = LabelDoneNum::whereYear('created_at', $targetYear)
+        ->whereMonth('created_at', $targetMonth)
         ->orderBy('created_at')
         ->get()
         ->groupBy(function ($row) {
@@ -151,19 +160,48 @@ class LabelNumController extends Controller
             return $day->sum('done');
         });
 
-        for($i = $firstDay; $i <= $lastDay; $i++){
-            $dailyCountLabel[] = $i;
+        // making arrays for graph data and label
+        $isGraphData = false; // a  flag to check a data exists
+        for($i = $firstDay; $i <= $lastDay; $i++){ // going thorough first day to last day of the tartget month
+            $dailyCountLabel[] = $i; // making lables for the graph
 
-            if(isset($dailyCountSum[$i])){
-                $dailyCountData[] = $dailyCountSum[$i];
+            if(isset($dailyCountSum[$i])){ // if there is data
+                $dailyCountData[] = $dailyCountSum[$i]; // storing the data 
+                $isGraphData = true; // the flag is up
                 // var_dump($dailyCount[$i]);
             }else{
-                $dailyCountData[] = 0;
+                $dailyCountData[] = 0; // storing the 0
             }
         }
-        var_dump($dailyCountData);
 
-        return view('dailyCount', ['dailyCountData' => $dailyCountData, 'dailyCountLabel' => $dailyCountLabel]);
+        // gettting first date of year and month for form selection
+        $firstDone = LabelDoneNum::orderBy('created_at', 'asc')->first();
+        $firstDoneDate = new \DateTime($firstDone->created_at);
+        $firstDoneYear = (int) $firstDoneDate->format('Y');
+        $firstDoneMonth = (int) $firstDoneDate->format('m');
+
+        // making an array for a selection of years
+        $selectionYear = array();
+        for($i = $firstDoneYear; $i <= $thisYear; $i++) $selectionYear += array($i => $i);
+
+        // making an array for a selection of months
+        $selectionMonth = array();
+        for($i = 1; $i <= 12; $i++) $selectionMonth += array($i => $i);
+        
+        // setting up date information for view
+        $datesInfo += array('selectionYear' => $selectionYear);
+        $datesInfo += array('selectionMonth' => $selectionMonth);
+        $datesInfo += array('targetYear' => $targetYear);
+        $datesInfo += array('targetMonth' => $targetMonth);
+
+        // showing a flush message if there is no date for the graph
+        if($isGraphData === false){
+            session()->flash('flash_message', $targetYear."年".$targetMonth."月はデータがありません");
+        }else{
+            session()->forget('flash_message'); // After it was put once, it somehow stays on session. So clearing it expressly 
+        }
+
+        return view('dailyCount', ['dailyCountData' => $dailyCountData, 'dailyCountLabel' => $dailyCountLabel, 'datesInfo' => $datesInfo]);
     }
 
 
@@ -197,7 +235,6 @@ class LabelNumController extends Controller
                 $dailyCount += array($i => 0);
             }
         }
-        var_dump($dailyCount);
 
         return view('test');
     }
