@@ -128,12 +128,20 @@ class LabelNumController extends Controller
         return view('labelNum', ['labelNum' => $labelNum]);
     }
 
+    public function dailyCount(){
+        $setYear = 2021;
+        $setMonth = 1;
 
-    public function test(){
+        $dailyCountData = array();
+        $dailyCountLabel = array();
+
+        $date = new \DateTime();
+        $firstDay  = (int) $date->setDate($setYear, $setMonth, 1)->format('d'); // 日を1で固定値を入れている
+        $lastDay  = (int) $date->setDate($setYear, $setMonth, 1)->format('t'); // 日を1で固定値を入れている
 
         
-        $test = LabelDoneNum::whereYear('created_at', 2021)
-        ->whereMonth('created_at', 1)
+        $dailyCountSum = LabelDoneNum::whereYear('created_at', $setYear)
+        ->whereMonth('created_at', $setMonth)
         ->orderBy('created_at')
         ->get()
         ->groupBy(function ($row) {
@@ -143,7 +151,54 @@ class LabelNumController extends Controller
             return $day->sum('done');
         });
 
-        var_dump($test);
+        for($i = $firstDay; $i <= $lastDay; $i++){
+            $dailyCountLabel[] = $i;
+
+            if(isset($dailyCountSum[$i])){
+                $dailyCountData[] = $dailyCountSum[$i];
+                // var_dump($dailyCount[$i]);
+            }else{
+                $dailyCountData[] = 0;
+            }
+        }
+        var_dump($dailyCountData);
+
+        return view('dailyCount', ['dailyCountData' => $dailyCountData, 'dailyCountLabel' => $dailyCountLabel]);
+    }
+
+
+    public function test(){
+        $setYear = 2021;
+        $setMonth = 1;
+
+        $dailyCount = array();
+
+        $date = new \DateTime();
+        $firstDay  = (int) $date->setDate($setYear, $setMonth, 1)->format('d'); // 日を1で固定値を入れている
+        $lastDay  = (int) $date->setDate($setYear, $setMonth, 1)->format('t'); // 日を1で固定値を入れている
+
+        
+        $dailyCountSum = LabelDoneNum::whereYear('created_at', $setYear)
+        ->whereMonth('created_at', $setMonth)
+        ->orderBy('created_at')
+        ->get()
+        ->groupBy(function ($row) {
+            return $row->created_at->format('d');
+        })
+        ->map(function ($day) {
+            return $day->sum('done');
+        });
+
+        for($i = $firstDay; $i <= $lastDay; $i++){
+            if(isset($dailyCountSum[$i])){
+                $dailyCount += array($i => $dailyCountSum[$i]);
+                // var_dump($dailyCount[$i]);
+            }else{
+                $dailyCount += array($i => 0);
+            }
+        }
+        var_dump($dailyCount);
+
         return view('test');
     }
 
