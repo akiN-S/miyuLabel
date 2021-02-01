@@ -19,7 +19,6 @@ class LabelNumController extends Controller
     public function input(Request $request) {
 
         $setting = LabelSetting::where('id', $request->settingId)->first();
-        var_dump($setting);
         if ($request->input != NULL){ 
             
             $ongoingSum = LabelOngoingNum::where('settingId', $setting->id)->sum("ongoing");;
@@ -50,6 +49,7 @@ class LabelNumController extends Controller
             }
 
             session()->flash('flash_message', '入力した内容を反映しました');
+            session()->flash('flash_message_type', "success");
 
         }else if ($request->plus != NULL){
             $ongoingInsert = new LabelOngoingNum();
@@ -58,6 +58,7 @@ class LabelNumController extends Controller
             $ongoingInsert->save();
 
             session()->flash('flash_message', 'プラス10しました');
+            session()->flash('flash_message_type', "success");
 
         }else if ($request->minus != NULL){
             $ongoingInsert = new LabelOngoingNum();
@@ -66,6 +67,7 @@ class LabelNumController extends Controller
             $ongoingInsert->save();
 
             session()->flash('flash_message', 'マイナス10しました');
+            session()->flash('flash_message_type', "success");
 
         }else if ($request->done != NULL){
             $ongoingInsert = new LabelOngoingNum();
@@ -80,6 +82,7 @@ class LabelNumController extends Controller
             $doneInsert->save();
 
             session()->flash('flash_message', '完了！次の箱を用意してください');
+            session()->flash('flash_message_type', "success");
         
         }
 
@@ -149,28 +152,52 @@ class LabelNumController extends Controller
         $lastDay  = (int) $date->setDate($targetYear, $targetMonth, 1)->format('t'); // 1 is fixed date for a month
         
         // counting daily total
-        $dailyCountSum = LabelDoneNum::whereYear('created_at', $targetYear)
+        $setting = LabelSetting::where('isSelected', true)->first(); // getting target setting id
+
+        $dailyCountDoneSum = LabelDoneNum::where('settingId', $setting->id)
+        ->whereYear('created_at', $targetYear)
         ->whereMonth('created_at', $targetMonth)
         ->orderBy('created_at')
         ->get()
         ->groupBy(function ($row) {
-            return $row->created_at->format('d');
+            return (int) $row->created_at->format('d'); // it returns string with 02 digits padding by "0" , so converting to int
         })
         ->map(function ($day) {
             return $day->sum('done');
         });
+
+        $dailyCountOngoingSum = LabelOngoingNum::where('settingId', $setting->id)
+        ->whereYear('created_at', $targetYear)
+        ->whereMonth('created_at', $targetMonth)
+        ->orderBy('created_at')
+        ->get()
+        ->groupBy(function ($row) {
+            return (int) $row->created_at->format('d'); // it returns string with 02 digits padding by "0" , so converting to int
+        })
+        ->map(function ($day) {
+            return $day->sum('ongoing');
+        });
+
 
         // making arrays for graph data and label
         $isGraphData = false; // a  flag to check a data exists
         for($i = $firstDay; $i <= $lastDay; $i++){ // going thorough first day to last day of the tartget month
             $dailyCountLabel[] = $i; // making lables for the graph
 
-            if(isset($dailyCountSum[$i])){ // if there is data
-                $dailyCountData[] = $dailyCountSum[$i]; // storing the data 
+            $dailyCountData[] = 0; // adding new item in the array and initializing with 0
+            $dailyCountDataIndex = $i - 1;
+
+            if(isset($dailyCountDoneSum[$i])){ // if there are data
+                $dailyCountData[$dailyCountDataIndex] += $dailyCountDoneSum[$i]; // adding the data 
                 $isGraphData = true; // the flag is up
                 // var_dump($dailyCount[$i]);
-            }else{
-                $dailyCountData[] = 0; // storing the 0
+            }
+
+            if(isset($dailyCountOngoingSum[$i])){ // if there are data
+
+                $dailyCountData[$dailyCountDataIndex] += $dailyCountOngoingSum[$i]; // adding the data 
+                $isGraphData = true; // the flag is up
+                // var_dump($dailyCount[$i]);
             }
         }
 
@@ -197,8 +224,7 @@ class LabelNumController extends Controller
         // showing a flush message if there is no date for the graph
         if($isGraphData === false){
             session()->flash('flash_message', $targetYear."年".$targetMonth."月はデータがありません");
-        }else{
-            session()->forget('flash_message'); // After it was put once, it somehow stays on session. So clearing it expressly 
+            session()->flash('flash_message_type', "warning");
         }
 
         return view('dailyCount', ['dailyCountData' => $dailyCountData, 'dailyCountLabel' => $dailyCountLabel, 'datesInfo' => $datesInfo]);

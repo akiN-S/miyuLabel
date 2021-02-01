@@ -3,68 +3,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Laravel</title>
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
-        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
-        <!-- Scripts -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-        <script>
-            @if (session('flash_message'))
-                $(function () {
-                        toastr.warning('{{ session('flash_message') }}');
-                });
-            @endif
-        </script>
-
-        <!-- Styles -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
-
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Nunito', sans-serif;
-                font-weight: 200;
-                height: 100vh;
-                margin: 0;
-            }
-            .full-height {
-                height: 100vh;
-            }
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
-            .position-ref {
-                position: relative;
-            }
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-            .content {
-                text-align: center;
-            }
-            .title {
-                font-size: 84px;
-            }
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 13px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
     </head>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
@@ -109,14 +48,6 @@
                                 labelString: '日付',  //ラベル
                             },
                         }],
-                    },
-                    layout: {                             //レイアウト
-                        padding: {                          //余白設定
-                            left: 100,
-                            right: 50,
-                            top: 0,
-                            bottom: 0
-                        }
                     },
                 }
             });
@@ -169,11 +100,11 @@
                             <form method="GET" action="{{ action('LabelNumController@dailyCount') }}">
                                 @csrf
                                 <div class="form-group row">
-                                    <div class="col-md-2 col-7">
+                                    <div class="col-md-5 col-7">
                                         {{ Form::select('year', $datesInfo['selectionYear'], $datesInfo['targetYear']) }} 年
                                         {{ Form::select('month', $datesInfo['selectionMonth'], $datesInfo['targetMonth']) }} 月
                                     </div>
-                                    <div class="col-md-4 col-5">
+                                    <div class="col-md-6 col-5">
                                         <button type="submit" class="btn btn-primary col-md-2 col-6" name="done" value="done">表示</button>
                                     </div>
                                 </div>

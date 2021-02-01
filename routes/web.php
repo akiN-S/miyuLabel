@@ -23,6 +23,8 @@ Route::get('/test', 'LabelNumController@test');
 Route::get('/dailyCount', 'LabelNumController@dailyCount');
 
 Route::get('/labelSetting', 'LabelSettingController@show');
+Route::get('/labelSetting/input', 'LabelSettingController@input');
+Route::post('/labelSetting/Save', 'LabelSettingController@save');
 
 
 
