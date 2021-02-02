@@ -13,8 +13,8 @@ class LabelNum extends Model
         'name',
         'numInBox',
         'quota',
-        'deliveryDateStr',
-        'startDateStr',
+        'deliveryDate',
+        'startDate',
         'unitPrice',
         'isSelected',
 

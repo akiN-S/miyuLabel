@@ -49,8 +49,8 @@
                                                             <td></td>
                                                         @endif
                                                         <td>{{ $labelNum->name }}</td>
-                                                        <td>{{ $labelNum->startDateStr }}</td>
-                                                        <td>{{ $labelNum->deliveryDateStr }}</td>
+                                                        <td>{{ $labelNum->startDate }}</td>
+                                                        <td>{{ $labelNum->deliveryDate }}</td>
                                                         <td>{{ $labelNum->quota }}</td>
                                                         <td>{{ $labelNum->numInBox }}</td>
                                                         <td>{{ $labelNum->unitPrice }}</td>

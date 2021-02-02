@@ -37,17 +37,6 @@ class LabelNumController extends Controller
                 $doneInsert->save();
             }
             
-            $settingInput = new LabelSetting();
-            $settingInput->quota = $request->labelNumQuota;
-            $settingInput->deliveryDate = strtotime($request->deliveryDate);
-            $settingInput->numInBox = $request->labelNumInBox;
-            if($setting != $settingInput){
-                $setting->quota = $request->labelNumQuota;
-                $setting->deliveryDate = strtotime($request->deliveryDate);
-                $setting->numInBox = $request->labelNumInBox;
-                $setting ->save();
-            }
-
             session()->flash('flash_message', '入力した内容を反映しました');
             session()->flash('flash_message_type', "success");
 
@@ -98,9 +87,9 @@ class LabelNumController extends Controller
         if($setting === NULL){
             $setting = new LabelSetting();
             $setting->quota = 0;
-            $setting->deliveryDate = strtotime(date('Y-m-d'));
+            $setting->deliveryDate = date('Y-m-d');
             $setting->numInBox = 1;
-            $setting->startDate = strtotime(date('Y-m-d'));
+            $setting->startDate = date('Y-m-d');
             $setting->unitPrice = 0;
             $setting->name = 'product';
             $setting->isSelected = true;

@@ -16,15 +16,15 @@ class Myfuncs {
         $labelNum->name = $setting->name;
         $labelNum->numInBox = $setting->numInBox;
         $labelNum->quota = $setting->quota;
-        $labelNum->deliveryDateStr = date('Y-m-d', $setting->deliveryDate);
-        $labelNum->startDateStr = date('Y-m-d', $setting->startDate);
+        $labelNum->deliveryDate = $setting->deliveryDate;
+        $labelNum->startDate = $setting->startDate;
         $labelNum->unitPrice = $setting->unitPrice;
         $labelNum->isSelected = $setting->isSelected;
 
         $labelNum->ongoing = LabelOngoingNum::where('settingId', $setting->id)->sum("ongoing");
         $labelNum->done = LabelDoneNum::where('settingId', $setting->id)->sum("done");
         
-        $labelNum->daysUntilDelivery = ($setting->deliveryDate - strtotime(date('Y-m-d'))) / (60 * 60 * 24) +1;;
+        $labelNum->daysUntilDelivery = (strtotime($setting->deliveryDate) - strtotime(date('Y-m-d'))) / (60 * 60 * 24) +1;;
 
         $labelNum->doneBox = $labelNum->done / $labelNum->numInBox;
         $labelNum->quotaBox = $labelNum->quota / $labelNum->numInBox;

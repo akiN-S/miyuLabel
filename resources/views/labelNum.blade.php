@@ -111,7 +111,7 @@
 
                                     <label for="deliveryDate" class="col-md-2  col-6 text-md-right">納品日：</label>
                                     <div class="col-md-2 col-6 ">
-                                         <strong>{{ $labelNum->deliveryDateStr }} </strong>
+                                         <strong>{{ $labelNum->deliveryDate }} </strong>
                                     </div>
 
                                     <label for="daysUntilDelivery" class="col-md-2 col-6 text-md-right">残日数：</label>

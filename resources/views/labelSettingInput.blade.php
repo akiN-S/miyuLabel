@@ -50,7 +50,7 @@
                                 <div class="form-group row">
                                     <label for="startDate" class="col-md-2  col-6 col-form-label text-md-right">開始日：</label>
                                     <div class="col-md-2 col-6">
-                                        <input id="startDate" type="date" class="form-control @error('startDate') is-invalid @enderror" name="startDate" value="{{ $labelNum->startDateStr }}" required>
+                                        <input id="startDate" type="date" class="form-control @error('startDate') is-invalid @enderror" name="startDate" value="{{ $labelNum->startDate }}" required>
                                         
                                         @error('startDate')
                                             <span class="invalid-feedback" role="alert">
@@ -64,7 +64,7 @@
                                 <div class="form-group row">
                                     <label for="deliveryDate" class="col-md-2  col-6 col-form-label text-md-right">納品日：</label>
                                     <div class="col-md-2 col-6">
-                                        <input id="deliveryDate" type="date" class="form-control @error('deliveryDate') is-invalid @enderror" name="deliveryDate" value="{{ $labelNum->deliveryDateStr }}" required>
+                                        <input id="deliveryDate" type="date" class="form-control @error('deliveryDate') is-invalid @enderror" name="deliveryDate" value="{{ $labelNum->deliveryDate }}" required>
                                         
                                         @error('deliveryDate')
                                             <span class="invalid-feedback" role="alert">

@@ -63,8 +63,8 @@ class LabelSettingController extends Controller
 
             // setting other inputted data
             $setting->name = $request->settingName; 
-            $setting->startDate = strtotime($request->startDate);
-            $setting->deliveryDate = strtotime($request->deliveryDate);
+            $setting->startDate = $request->startDate;
+            $setting->deliveryDate = $request->deliveryDate;
             $setting->quota = $request->labelNumQuota;
             $setting->numInBox = $request->labelNumInBox;
             $setting->unitPrice = $request->unitPrice;
