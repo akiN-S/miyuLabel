@@ -32,7 +32,12 @@ class Myfuncs {
         $labelNum->left = $labelNum->quota - $labelNum->done;
         $labelNum->leftBox = $labelNum->quotaBox - $labelNum->doneBox;
 
-        $labelNum->quotaPerDay = $labelNum->left / $labelNum->daysUntilDelivery;
+        if($labelNum->daysUntilDelivery == 0){
+            $labelNum->quotaPerDay = "納品日後";
+        }else{
+            $labelNum->quotaPerDay = $labelNum->left / $labelNum->daysUntilDelivery;
+
+        }
 
         $labelNum->price = $labelNum->unitPrice * $labelNum->done;
 

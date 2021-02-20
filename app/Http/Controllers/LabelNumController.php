@@ -85,34 +85,12 @@ class LabelNumController extends Controller
         
         $setting = LabelSetting::where('isSelected', true)->first();
         if($setting === NULL){
-            $setting = new LabelSetting();
-            $setting->quota = 0;
-            $setting->deliveryDate = date('Y-m-d');
-            $setting->numInBox = 1;
-            $setting->startDate = date('Y-m-d');
-            $setting->unitPrice = 0;
-            $setting->name = 'product';
-            $setting->isSelected = true;
-            $setting->save();
+            session()->flash('flash_message', '製品を登録してください');
+            session()->flash('flash_message_type', "warning");
+            return redirect('/labelSetting');
         }
+
         $setting = LabelSetting::where('isSelected', true)->first();
-
-        $labelOngoingNum = LabelOngoingNum::all()->first();
-        if($labelOngoingNum === NULL){
-            $labelOngoingNum = new LabelOngoingNum();
-            $labelOngoingNum->ongoing = 0;
-            $labelOngoingNum->settingId = $setting->id;
-            $labelOngoingNum->save();
-        }
-
-        $labelDoneNum = LabelDoneNum::all()->first();
-        if($labelDoneNum === NULL){
-            $labelDoneNum = new LabelDoneNum();
-            $labelDoneNum->done = 0;
-            $labelDoneNum->settingId = $setting->id;
-            $labelDoneNum->save();
-        }
-        
         $labelNum = MyFuncs::getLabelNum($setting);
 
         return view('labelNum', ['labelNum' => $labelNum]);

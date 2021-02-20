@@ -54,7 +54,9 @@ class LabelSettingController extends Controller
 
             if($request->isSelected === "on"){ // when isSelected is selected, it gives "on" as String. Note: when it's not selected, it's NULL
                 $settingSelected = LabelSetting::where('isSelected', true)->first(); // getting current selected item
-                if($settingSelected->id !== $setting->id){ // if inputted selected item is different from current selected item
+                if( $settingSelected === null){ //if $settingSelected is null (means saving itme is the first item)
+                    $setting->isSelected = true;
+                } else if($settingSelected->id !== $setting->id){ // if inputted selected item is different from current selected item
                     $settingSelected->isSelected = false; // making the current selected item false
                     $settingSelected->save();
                     $setting->isSelected = true; // making the inputted selected item true
